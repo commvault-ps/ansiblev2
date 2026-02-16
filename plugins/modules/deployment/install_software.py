@@ -247,10 +247,13 @@ def main():
             sw_cache_client=dict(type=str, required=False, default=None),
             wait_for_job_completion=dict(type=bool, required=False, default=True),
             ma_index_cache_location=dict(type=str, required=False, default=None),
+            ssh_location=dict(type=str, required=False, default=None),
+            ssh_key_passphrase=dict(type=str, required=False, default=None)
         )
                         
         module = CVAnsibleModule(argument_spec=module_args)
         encoded_password=final_download_decision=os_to_download=None
+        ssh_content = encoded_ssh_content = None
 
         os_type=module.params['os_type']
         client_computers=module.params['client_computers']
@@ -264,6 +267,8 @@ def main():
         sw_cache_client=module.params['sw_cache_client']
         wait_for_job_completion = module.params['wait_for_job_completion']
         ma_index_cache_location = module.params['ma_index_cache_location']
+        ssh_location = module.params['ssh_location']
+        ssh_key_passphrase = module.params['ssh_key_passphrase']
 
         windows_features=unix_features=None
 
@@ -296,6 +301,14 @@ def main():
 
         if plain_password:
             encoded_password=b64encode(plain_password.encode()).decode()
+        if ssh_location:
+            try:
+                with open(ssh_location, 'r') as ssh_file:
+                    ssh_content = ssh_file.read()
+                    encoded_ssh_content = b64encode(ssh_content.encode()).decode()
+            except:
+                raise Exception(
+                    "We can't open the ppk file in the provided ssh_location, please provide the base64 encrypted content of the ppk file in ssh_content parameter")
 
         install_job = module.commcell.install_software(
                         client_computers=client_computers,
@@ -307,8 +320,10 @@ def main():
                         client_group_name=client_group_name,
                         storage_policy_name=storage_policy_name,
                         sw_cache_client=sw_cache_client,
-                        index_cache_location=ma_index_cache_location)
-        
+                        index_cache_location=ma_index_cache_location,
+                        ssh={"location": ssh_location, "content": encoded_ssh_content,
+                        "key_passphrase": ssh_key_passphrase} if ssh_location and ssh_content else None)
+
         job_id = install_job.job_id
         module.result['job_id'] = str(job_id)
 

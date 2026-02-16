@@ -29,52 +29,52 @@ options:
       - Hostname of the Web server.
     type: str
     required: false
- commcell_username:
+  commcell_username:
     description:
       - Commcell username
     type: str
     required: false
- commcell_password:
+  commcell_password:
     description:
       - Commacell password
     type: str
     required: false
- client:
+  client:
     description:
       - The name of the Client.
     type: str
     required: true
- instance:
+  instance:
     description:
       - The name of the Instance
     type: str
     required: true
- agent_type:
+  agent_type:
     description:
       - The agent type.
     type: str
     required: true
     default: None
     choices: ["sql server","oracle","mysql", "postgresql"]
- backupset:
+  backupset:
     description:
       - The name of the backupset.
     type: str
-    require: false
+    required: false
     default: default backupset.
- subclient:
+  subclient:
     description:
       - The name of the subclient.
     type: str
     required: false
     default: subclient name default.
- backup_level:
-    description: 
+  backup_level:
+    description:
       - backup level.
     type: str
     required: false
     default: Full
-    choice: ["Full","Incremental","Differential","Synthetic_full"]
+    choices: ["Full","Incremental","Differential","Synthetic_full"]
  
 '''
 

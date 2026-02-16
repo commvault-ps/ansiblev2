@@ -68,6 +68,8 @@ Commvault software assists organizations with data backup and recovery, cloud an
 
   * [commvault.ansible.request - makes a http request on the commserver api](#commvault.ansible.request)
 
+  * [commvault.ansible.ansiblev1 - Runs Python SDK functions using the generated entities similar to ansible v1](#commvault.ansible.ansiblev1)
+
   * [commvault.ansible.deployment.install_software - to perform push installation from the commserve](#commvault.ansible.deployment.install_software)
 
   * [commvault.ansible.deployment.download_software - to perform download software on commserve](#commvault.ansible.deployment.download_software)
@@ -364,6 +366,110 @@ response |  success  |   dict  |   Response of the HTTP request  |   {'errorCode
 
 
 
+## commvault.ansible.ansiblev1 <a name="commvault.ansible.ansiblev1"></a>
+Runs Python SDK functions using the generated entities similar to ansible v1
+
+
+#### Synopsis
+ Runs Python SDK functions using the generated entities similar to ansible v1
+
+
+
+
+
+
+
+
+
+
+
+
+#### Options
+| Parameter     | required    | default  | choices    | comments |
+| ------------- |-------------| ---------|----------- |--------- |
+webserver_hostname  |   no  |  | |  Hostname of the Web Server. | 
+commcell_username  |   no  |  | |  Username | 
+commcell_password  |   no  |  | |  Password | 
+operation  |   yes  |  |  |  Name of the target entity's method to be run | 
+arguments  |   no  |  | |  Arguments to be passed to target entity's method to be run | 
+entity_type  |   yes  |    | <ul><li>Clients</li><li>Client</li><li>Clientgroups</li><li>Clientgroup</li><li>Agents</li><li>Agent</li><li>Instances</li><li>Instance</li><li>Backupsets</li><li>Backupset</li><li>Subclients</li><li>Subclient</li><li>Job</li><li>MediaAgents</li><li>MediaAgent</li><li>StoragePools</li><li>StoragePool</li><li>DiskLibraries</li><li>DiskLibrary</li></ul> |  Name of the target entity | 
+entity_filters  |   no  |  |  |  Dictionary consisting of filters to select particular entities. Available filters: "client", "clientgroup", "agent", "instance", "backupset", "subclient", "job_id", "media_agent", "storage_pool", "disk_library" | 
+
+
+
+
+
+
+
+
+
+
+
+#### Returns
+| Name          | Returned    | Type     | Description | Sample |
+| ------------- |-------------| ---------|-----------  |--------|
+response |  success  |   dict  |   Response from the SDK function  |   {'errorCode': 0, 'errorMessage': ''}  |
+
+
+
+
+#### Examples
+
+```
+- name: "GET_CLIENT_ID"
+  commvault.ansible.ansiblev1:
+    operation: "client_id"
+    entity_type: client
+    entity_filter: {
+      "client": "client_name"
+    }
+  register: output
+
+- name: "GET_JOB_DETAILS"
+  commvault.ansible.ansibleV1:
+    operation: "_get_job_details"
+    entity_type: job
+    entity: {
+    "job_id": 746908
+    }
+  register: output
+
+- name: "CHECK_IF_CLIENT_EXISTS"
+  commvault.ansible.request:
+    webserver_hostname: "demo-CS-Name"
+    commcell_username: "user"
+    commcell_password: "CS-Password"
+    operation: "has_client"
+    entity_type: clients
+    arguments: {
+      "client_name": "clientXX"
+    }
+  register: response
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+
+
 ## commvault.ansible.deployment.install_software <a name="commvault.ansible.deployment.install_software"></a>
 To perform Push Installation from the Commserve
 
@@ -401,7 +507,8 @@ storage_policy_name  |   no  |    | |  Storage policy for the default subclient 
 sw_cache_client  |   no  |    | |  Remote Cache Client Name/ Over-riding Software Cache | 
 ma_index_cache_loaction  |   no  |    | |  Index Cache location of the Media Agent package | 
 wait_for_job_completion  |   no  |  True  | |  Will wait for Download Job to Complete | 
-
+ssh_location |   no  |   | | Location of the ppk file for linux push install       |
+ssh_key_passphrase | no  |   | | Passphrase for the ppk file for linux push install |
 
 
 
@@ -446,6 +553,8 @@ job_id |  success  |   str  |   Push Software Job ID  |   2016  |
     install_path: "D:\Random"
     sw_cache_client: "RemoteCacheClient1"
     wait_for_job_completion: False
+    ssh_location: "C:\path\to\ssh_key.ppk"
+    ssh_key_passphrase: "passphrase"
 
 - name: "INSTALL_SOFTWARE/PUSH_INSTALL_WINDOWS"
   commvault.ansible.deployment.install_software:

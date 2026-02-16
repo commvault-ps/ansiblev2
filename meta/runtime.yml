@@ -18,6 +18,7 @@ action_groups:
     - login
     - logout
     - request
+    - ansiblev1
     - deployment.download_software
     - deployment.install_software
     - deployment.push_updates

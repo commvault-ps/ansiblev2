@@ -86,7 +86,7 @@ def main():
         commcell_password=dict(type=str, required=False, no_log=True),
         webserver_username=dict(type=str, required=False),
         webserver_password=dict(type=str, required=False, no_log=True),
-        auth_token=dict(type=str, required=False),
+        auth_token=dict(type=str, required=False, no_log=True),
         verify_ssl=dict(type=bool, required=False, default=True),
         certificate_path=dict(type=str, required=False)
     )
